@@ -46,10 +46,13 @@ if df.iloc[len(df.index)-1,0]<df.iloc[0,3]:
 else:
     icolor='green'
 mlt.plot(date,price,color=icolor)
+mlt.plot([max(price)]*len(date),color="black",linestyle="dotted",label="peak/lowest price")
+mlt.plot([min(price)]*len(date),color="black",linestyle="dotted")
 mlt.xticks(date[::len(date)//5],dateInYears[::len(date)//5])
 mlt.xlabel("Date")
 mlt.ylabel("Price in Dollars")
 mlt.title(stock + " (rough estimation)")
+mlt.legend()
 mlt.grid()
 mlt.show()
 
