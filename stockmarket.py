@@ -34,6 +34,9 @@ if df.iloc[len(df.index)-1,0]>df.iloc[0,3]:
 else:
     icolor='#9c0606'
 mlt.plot(date,price,color=icolor)
+mlt.xlabel("Date")
+mlt.ylabel("Price in Dollars")
+mlt.title(stock)
 mlt.grid()
 mlt.show()
 
