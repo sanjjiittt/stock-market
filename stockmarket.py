@@ -8,16 +8,25 @@ file_path = os.path.join(base_path, "stocks.json")
 
 with open(file_path, "r") as file:
     tsym=json.load(file)
+
 while True:
     try: 
         stock=input("Enter your Stock name: ").title()
-        timeperiod=input("Enter time period(1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max): ")
-        assert timeperiod in '1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max'
         ticker=yf.Ticker(tsym.get(stock))
-    except (AttributeError,AssertionError):
-        print("Error! Try again")
+    except (AttributeError):
+        print("Invalid stock name")
     else:
         break
+
+while True:
+    try:
+        timeperiod=input("Enter time period(1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max): ")
+        assert timeperiod in ['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
+    except AssertionError:
+        print("Invalid date range")
+    else:
+        break
+
 dateIndex=1
 df=ticker.history(period=timeperiod)
 date=[]
@@ -36,8 +45,7 @@ else:
 mlt.plot(date,price,color=icolor)
 mlt.xlabel("Date")
 mlt.ylabel("Price in Dollars")
-mlt.title(stock)
+mlt.title(stock + " (rough estimation)")
 mlt.grid()
 mlt.show()
-
 
