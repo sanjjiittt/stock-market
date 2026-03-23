@@ -22,7 +22,7 @@ while True:
     try:
         timeperiod=input("Enter time period(1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max): ")
         assert timeperiod in ['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
-    except AssertionError:
+    except (AssertionError):
         print("Invalid date range")
     else:
         break
@@ -30,12 +30,15 @@ while True:
 dateIndex=1
 df=ticker.history(period=timeperiod)
 date=[]
+dateInYears=[]
 price=[]
+priceInDollars=[]
 while True:
     if dateIndex>len(df.index):
         break
     else:
         date.append(str(df.index[dateIndex-1]).split()[0])
+        dateInYears.append((str(df.index[dateIndex-1]).split()[0]).split("-")[0])
         price.append(df.iloc[dateIndex-1,3])
         dateIndex+=1
 if df.iloc[len(df.index)-1,0]>df.iloc[0,3]:
@@ -43,6 +46,7 @@ if df.iloc[len(df.index)-1,0]>df.iloc[0,3]:
 else:
     icolor='#9c0606'
 mlt.plot(date,price,color=icolor)
+mlt.xticks(date,dateInYears)
 mlt.xlabel("Date")
 mlt.ylabel("Price in Dollars")
 mlt.title(stock + " (rough estimation)")
