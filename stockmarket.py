@@ -46,7 +46,7 @@ if df.iloc[len(df.index)-1,0]>df.iloc[0,3]:
 else:
     icolor='#9c0606'
 mlt.plot(date,price,color=icolor)
-mlt.xticks(date,dateInYears)
+mlt.xticks(date[::100],dateInYears[::100])
 mlt.xlabel("Date")
 mlt.ylabel("Price in Dollars")
 mlt.title(stock + " (rough estimation)")
