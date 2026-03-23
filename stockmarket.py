@@ -20,8 +20,8 @@ while True:
 
 while True:
     try:
-        timeperiod=input("Enter time period(1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max): ")
-        assert timeperiod in ['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
+        timeperiod=input("Enter time period(5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max): ")
+        assert timeperiod in ['5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
     except (AssertionError):
         print("Invalid date range")
     else:
@@ -46,7 +46,7 @@ if df.iloc[len(df.index)-1,0]>df.iloc[0,3]:
 else:
     icolor='#9c0606'
 mlt.plot(date,price,color=icolor)
-mlt.xticks(date[::100],dateInYears[::100])
+mlt.xticks(date[::len(date)//5],dateInYears[::len(date)//5])
 mlt.xlabel("Date")
 mlt.ylabel("Price in Dollars")
 mlt.title(stock + " (rough estimation)")
