@@ -55,4 +55,3 @@ mlt.title(stock + " (rough estimation)")
 mlt.legend()
 mlt.grid()
 mlt.show()
-
