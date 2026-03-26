@@ -1,3 +1,2 @@
-1. dates according to what range on has selected(done)
-2. to add multiple stocks at once
-3. point the peak and lowest point on the graph(done)
+get live stock price every second, compare two stocks, plot live graph, 
+tell risk tollerance using standard deviation and moving average, stock predictor

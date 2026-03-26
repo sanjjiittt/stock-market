@@ -1,57 +1,72 @@
 import yfinance as yf
-import json
-import matplotlib.pyplot as mlt
+import json 
+import numpy as np
 import os
+import matplotlib.pyplot as mlt
+
 
 base_path = os.path.dirname(__file__)
 file_path = os.path.join(base_path, "stocks.json")
 
 with open(file_path, "r") as file:
-    tsym=json.load(file)
+    tickerNames=json.load(file)
 
-while True:
-    try: 
-        stock=input("Enter your Stock name: ").title()
-        ticker=yf.Ticker(tsym.get(stock))
-    except (AttributeError):
-        print("Invalid stock name")
-    else:
-        break
+stockName=""
 
-while True:
-    try:
-        timeperiod=input("Enter time period (5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max): ")
-        assert timeperiod in ['5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
-    except (AssertionError):
-        print("Invalid date range")
-    else:
-        break
+def getStockDetails():
+    global stockName
+    while True:
+        try:
+            stockName=input("Enter stock name: ").title()
+            assert stockName != None
+            tickerSymbol=yf.Ticker(tickerNames.get(stockName))
+        except (AttributeError,AssertionError):
+            print("Invalid stock name")
+        else:
+            break
+    
+    while True:
+        try:
+            timePeriod=input("Time peroid: (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max): ")
+            assert timePeriod in ['1d','5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
+        except AssertionError:
+            print("Invalid time period")
+        else:
+            break
 
-dateIndex=1
-df=ticker.history(period=timeperiod)
-date=[]
-dateInYears=[]
-price=[]
-priceInDollars=[]
-while True:
-    if dateIndex>len(df.index):
-        break
+    return {"symbol":tickerSymbol,"time":timePeriod}
+    
+
+def getStockHistory(tickerSymbol,timePeriod):
+    df=tickerSymbol.history(timePeriod)
+    date=[]
+    closingPrice=[]
+    for i in range(len(df.index)):
+        date.append(str(df.index[i].date()))
+        closingPrice.append(round(float(df.iloc[i,3]),3))
+
+    return np.array(date),np.array(closingPrice)
+
+def plotStock(history):
+    global stockName
+    date=history[0]
+    price=history[1]
+    if price[0]>price[-1]:
+        pickColor="red"
     else:
-        date.append(str(df.index[dateIndex-1]).split()[0])
-        dateInYears.append((str(df.index[dateIndex-1]).split()[0]).split("-")[0])
-        price.append(df.iloc[dateIndex-1,3])
-        dateIndex+=1
-if df.iloc[len(df.index)-1,0]<df.iloc[0,3]:
-    icolor='#9c0606'
-else:
-    icolor='green'
-mlt.plot(date,price,color=icolor)
-mlt.plot([max(price)]*len(date),color="black",linestyle="dotted",label="peak/lowest price")
-mlt.plot([min(price)]*len(date),color="black",linestyle="dotted")
-mlt.xticks(date[::len(date)//5],dateInYears[::len(date)//5])
-mlt.xlabel("Date")
-mlt.ylabel("Price in Dollars")
-mlt.title(stock + " (rough estimation)")
-mlt.legend()
-mlt.grid()
-mlt.show()
+        pickColor="green"
+    mlt.plot(date,price,color=pickColor)
+    mlt.xticks(date[::len(date)//1])
+    mlt.xlabel("Date")
+    mlt.ylabel("Price in Dollars")
+    mlt.title(stockName + " (rough estimation)")
+    mlt.grid()
+    mlt.show()
+
+
+
+stockDetails=getStockDetails()
+history=getStockHistory(stockDetails["symbol"],stockDetails["time"])
+plotStock(history)
+
+
