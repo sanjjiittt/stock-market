@@ -13,7 +13,7 @@ with open(file_path, "r") as file:
 
 stockName=""
 
-def getStockDetails():
+def getStock():
     global stockName
     while True:
         try:
@@ -38,12 +38,28 @@ def getStockDetails():
     
 
 def getStockHistory(tickerSymbol,timePeriod):
-    df=tickerSymbol.history(timePeriod)
-    date=[]
-    closingPrice=[]
-    for i in range(len(df.index)):
-        date.append(str(df.index[i].date()))
-        closingPrice.append(round(float(df.iloc[i,3]),3))
+    if timePeriod in ['1d','5d']:
+        df=tickerSymbol.history(timePeriod,interval='5m')
+        date=[]
+        closingPrice=[]
+        for i in range(len(df.index)):
+            date.append(str(df.index[i]))
+            closingPrice.append(round(float(df.iloc[i,3]),3))
+    elif timePeriod in ['1mo','3mo','6mo']:
+        df=tickerSymbol.history(timePeriod,interval='1d')
+        date=[]
+        closingPrice=[]
+        for i in range(len(df.index)):
+            date.append(str(df.index[i].date()))
+            closingPrice.append(round(float(df.iloc[i,3]),3))
+    else:
+        df=tickerSymbol.history(timePeriod,interval='1d')
+        date=[]
+        closingPrice=[]
+        for i in range(len(df.index)):
+            date.append(str(df.index[i].date()))
+            closingPrice.append(round(float(df.iloc[i,3]),3))
+
 
     return np.array(date),np.array(closingPrice)
 
@@ -56,7 +72,7 @@ def plotStock(history):
     else:
         pickColor="green"
     mlt.plot(date,price,color=pickColor)
-    mlt.xticks(date[::len(date)//1])
+    mlt.xticks(date[::len(date)//5])
     mlt.xlabel("Date")
     mlt.ylabel("Price in Dollars")
     mlt.title(stockName + " (rough estimation)")
@@ -65,8 +81,6 @@ def plotStock(history):
 
 
 
-stockDetails=getStockDetails()
+stockDetails=getStock()
 history=getStockHistory(stockDetails["symbol"],stockDetails["time"])
 plotStock(history)
-
-
