@@ -22,7 +22,6 @@ def choice():
 def getStock():
     global stockName
     global tickerSymbol
-    global timePeriod
 
     while True:
         try:
@@ -34,8 +33,7 @@ def getStock():
         else:
             break
 
-    
-    
+   
 
 def getStockHistory():
     date=[]
@@ -49,15 +47,9 @@ def getStockHistory():
     return date,closingPrice
 
 
-
 def latestPrice():
-    '''df=tickerSymbol.history(period='1d',interval='1m')
-    return str(df.index[-1].time()), round(float(df.iloc[-1,3]),3)'''
-    n=1
-    while True:
-        n+=1
-        return n
-  
+    df=tickerSymbol.history(period='1d',interval='5m')
+    return str(df.index[-1].time()), round(float(df.iloc[-1,3]),3)
 
 def update(frame):
     oldDate,oldPrice=history[0],history[1]
@@ -68,11 +60,14 @@ def update(frame):
     axis.relim()
     return line,
 
-
 stockDetails=getStock()
 history=getStockHistory()
 fig,axis=mlt.subplots()
-line,=axis.plot(history[0],history[1])
+if history[1][-1]>history[1][0]:
+    newColor='green'
+else:
+    newColor='red'
+line,=axis.plot(history[0],history[1],color=newColor)
 mlt.xticks(history[0][::len(history[0])//5])
 mlt.grid()
 mlt.xlabel("Time")
@@ -80,3 +75,4 @@ mlt.ylabel("Price in Dollars")
 mlt.title(stockName + " (rough estimation)")
 ani = FuncAnimation(fig, update, interval=60000, cache_frame_data=False)
 mlt.show()
+
